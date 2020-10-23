@@ -1,0 +1,11 @@
+# stage 1 building the code
+FROM golang:1.15-alpine as builder
+
+COPY / /golangci
+WORKDIR /golangci
+RUN CGO_ENABLED=0 GOARM=7 GOARCH=arm GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o golangci-lint ./cmd/golangci-lint/main.go
+
+# stage 2
+FROM scratch
+COPY --from=builder /golangci/golangci-lint /usr/bin/
+CMD ["./golangci/golangci-lint"]
