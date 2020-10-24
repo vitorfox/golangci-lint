@@ -6,6 +6,7 @@ WORKDIR /golangci
 RUN CGO_ENABLED=0 GOARM=7 GOARCH=arm GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o golangci-lint ./cmd/golangci-lint/main.go
 
 # stage 2
-FROM scratch
+FROM golang:1.15-alpine
+RUN apk --no-cache add musl-dev git mercurial
 COPY --from=builder /golangci/golangci-lint /usr/bin/
-CMD ["./golangci/golangci-lint"]
+CMD ["golangci-lint"]
